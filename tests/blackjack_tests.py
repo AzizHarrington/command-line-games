@@ -1,29 +1,29 @@
 from nose.tools import *
 
-from main.blackjack import Deck, Hand
+from main.blackjack import Deck, Player, Dealer, Game
 
 
 def test_deck():
     deck = Deck()
     assert_equal(len(deck.cards), 52)
 
-    deck.dealtwo()
-    deck.dealone()
+    deck.drawtwo()
+    deck.drawone()
     assert_equal(len(deck.cards), 49)
 
+    for i in range(53):
+        deck.drawone()
+    assert_equal(True, (len(deck.cards) != 0))
+
+
 # suites: ♠♥♦♣
-def test_hand():
-    hand = Hand(['T♠', '2♥'])
-    assert_equal(hand.cards, ['T♠', '2♥'])
+def test_player():
+    pass
 
-    hand.update(['T♣'])
-    assert_equal(hand.cards, ['T♠', '2♥', 'T♣'])
-    assert_equal(hand.score(), 'Bust!')
 
-    hand = Hand(['K♠', 'T♣'])
-    assert_equal(hand.score(), 20)
+def test_dealer():
+    pass
 
-# def test_hand_w_user_input():
-#     hand = Hand(['A♥', 'J♠'])
-#     assert_equal(hand.score(), 'Blackjack!')
 
+def test_game():
+    pass
