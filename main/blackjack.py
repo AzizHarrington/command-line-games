@@ -28,11 +28,11 @@ class Player(object):
         self.hand = None
         self.stay = False
 
-    def deal(self):
-        self.hand = deck.drawtwo()
+    def deal(self, cards): #accepts list as input
+        self.hand = cards
 
-    def hit(self):
-        self.hand.extend(deck.drawone())
+    def hit(self, card): #accepts list as input
+        self.hand.extend(card)
 
     def next_move(self):
         print("What would you like to do next? (choose one)")

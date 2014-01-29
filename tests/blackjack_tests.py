@@ -18,7 +18,28 @@ def test_deck():
 
 # suites: ♠♥♦♣
 def test_player():
-    pass
+    player = Player()
+
+    player.deal(['4♠', '7♦'])
+    assert_equal(player.hand, ['4♠', '7♦'])
+
+    player.hit(['T♣'])
+    assert_equal(player.hand, ['4♠', '7♦', 'T♣'])
+
+    #TODO
+    #commented methods below need input() to be mocked
+
+    #player.next_move()
+
+    #player.current_score()
+
+    ten_value = player.value('T♠')
+    assert_equal(ten_value, 10)
+
+    num_value = player.value('7♣')
+    assert_equal(num_value, 7)
+
+    #get_ace_value()
 
 
 def test_dealer():
