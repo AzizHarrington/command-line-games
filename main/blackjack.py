@@ -28,11 +28,11 @@ class Player(object):
         self.hand = None
         self.stay = False
 
-    def deal(self, cards): #accepts list as input
-        self.hand = cards
+    def deal(self):
+        self.hand = deck.drawtwo()
 
-    def hit(self, card): #accepts list as input
-        self.hand.extend(card)
+    def hit(self): #accepts list as input
+        self.hand.extend(deck.drawone())
 
     def next_move(self):
         print("What would you like to do next? (choose one)")
@@ -82,7 +82,7 @@ class Player(object):
 class Dealer(Player):
 
     def next_move(self):
-        if self.score() < 16:
+        if self.current_score() < 17:
             self.hit()
             print("The dealer took a hit.")
         else:
