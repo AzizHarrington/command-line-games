@@ -42,10 +42,13 @@ class Player(object):
         next = input(">")
         if next == '1':
             self.hit()
-        if next == '2':
+        elif next == '2':
             self.stay = True
-        if next == '3':
+        elif next == '3':
             print(self.hand)
+            self.next_move()
+        else:
+            print("Please enter 1, 2, or 3")
             self.next_move()
 
     def current_score(self):

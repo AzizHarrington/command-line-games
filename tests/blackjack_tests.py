@@ -1,3 +1,4 @@
+from mock import patch, Mock
 from nose.tools import *
 
 from main.blackjack import Deck, Player, Dealer, Game
@@ -26,20 +27,40 @@ def test_player():
     player.hit()
     assert_equal(3, len(player.hand))
 
-    #TODO
-    #commented methods below need input() to be mocked
-
-    #player.next_move()
-
-    #player.current_score()
-
     ten_value = player.value('T♠')
     assert_equal(10, ten_value)
 
     num_value = player.value('7♣')
     assert_equal(7, num_value)
 
-    #get_ace_value()
+
+@patch('builtins.input', lambda x: '1')
+def test_player_next_move_is_hit():
+    player = Player()
+    player.deal()
+    player.next_move()
+    assert_equal(3, len(player.hand))
+
+
+@patch('builtins.input', lambda x: '2')
+def test_player_next_move_is_stay():
+    player = Player()
+    player.deal()
+    player.next_move()
+    assert_equal(True, player.stay)
+
+@patch('builtins.input', lambda x: '11')
+def test_player_current_score_with_ace():
+    player = Player()
+    player.hand = ['J♣', 'A♥']
+    score = player.current_score()
+    assert_equal(22, score)
+
+@patch('builtins.input', lambda x: '11')
+def test_player_w_mocked_input():
+    player = Player()
+    val = player.get_ace_value('A♠', 10)
+    assert_equal(11, val)
 
 
 def test_dealer(): #ai tests
@@ -79,7 +100,3 @@ def test_dealer(): #ai tests
     dealer.hand = ['T♥', '7♥']
     dealer.next_move()
     assert_equal(2, len(dealer.hand))
-
-
-def test_game():
-    pass
