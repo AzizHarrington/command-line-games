@@ -1,5 +1,4 @@
 
-
 #some constants
 SHIP_MARKER = '▣'
 HIT = '▢'
@@ -74,4 +73,3 @@ sub2.render(grid)
 destroyer2.render(grid)
 
 grid.display_grid()
-print(grid.grid)
