@@ -53,8 +53,8 @@ def test_player_next_move_is_stay():
 def test_player_current_score_with_ace():
     player = Player()
     player.hand = ['J♣', 'A♥']
-    score = player.current_score()
-    assert_equal(22, score)
+    player.get_current_score()
+    assert_equal(22, player.score)
 
 @patch('builtins.input', lambda x: '11')
 def test_player_w_mocked_input():
@@ -68,28 +68,28 @@ def test_dealer(): #ai tests
 
     #score two face cards
     dealer.hand = ['J♥', 'Q♠']
-    score = dealer.current_score()
-    assert_equal(20, score)
+    dealer.get_current_score()
+    assert_equal(20, dealer.score)
 
     #score large hand
     dealer.hand = ['2♠', '5♦', '7♥', '2♣']
-    score = dealer.current_score()
-    assert_equal(16, score)
+    dealer.get_current_score()
+    assert_equal(16, dealer.score)
 
     #score two aces
     dealer.hand = ['A♣', 'A♣']
-    score = dealer.current_score()
-    assert_equal(12, score)
+    dealer.get_current_score()
+    assert_equal(12, dealer.score)
 
     #score blackjack
     dealer.hand = ['J♣', 'A♥']
-    score = dealer.current_score()
-    assert_equal(22, score)
+    dealer.get_current_score()
+    assert_equal(22, dealer.score)
 
     #score bust
     dealer.hand = ['T♥', '6♥', 'K♥']
-    score = dealer.current_score()
-    assert_equal(0, score)
+    dealer.get_current_score()
+    assert_equal(0, dealer.score)
 
     #next move under 17
     dealer.hand = ['4♠', '7♦']
