@@ -1,7 +1,7 @@
 from mock import patch, Mock
 from nose.tools import *
 
-from main.blackjack import Deck, Player, Dealer, Game
+from main.blackjack import *
 
 
 def test_deck():
