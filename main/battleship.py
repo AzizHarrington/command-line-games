@@ -45,7 +45,7 @@ class Ship(object):
         self.x = pos[0]
         self.y = pos[1]
 
-    def render(self, ship):
+    def render(self, grid):
         length = self.ship_length[self.name]
         for i in range(length):
             if self.direction == 'accross':
