@@ -11,6 +11,6 @@ def test_battlefield():
 
 
 def test_ship():
-    carrier = Ship('carrier', [8, 'E'], 'accross')
+    carrier = Ship('destroyer', (8, 'E'), 'accross')
 
-    assert_equal(5, carrier.length)
+    assert_equal([(8, 'E'), (8, 'F')], carrier.coordinates)
