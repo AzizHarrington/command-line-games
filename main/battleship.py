@@ -15,13 +15,12 @@ class Battlefield(object):
                         for alpha in ABC}
                         for num in range(1, LIMIT + 1)}
 
-    def display_grid(self):
+    def render_grid(self):
         line = '   '
         for a in ABC:
             line += a
             line += ' '
         print(line)
-
         for i in range(1, LIMIT + 1):
             line = ' ' if len(str(i)) == 1 else ''
             line += str(i)
@@ -30,6 +29,13 @@ class Battlefield(object):
                 line += self.grid[i][a]
                 line += ' '
             print(line)
+
+    def map_ship(self, ship):
+        for i in range(ship.length):
+            if ship.direction == 'accross':
+                self.grid[ship.x][chr(ord(ship.y) + i)] = SHIP_MARKER
+            elif ship.direction == 'down':
+                self.grid[ship.x + i][ship.y] = SHIP_MARKER
 
 
 class Ship(object):
@@ -41,35 +47,30 @@ class Ship(object):
 
     def __init__(self, name, pos, direction):
         self.name = name
+        self.length = self.ship_length[name]
         self.direction = direction
         self.x = pos[0]
         self.y = pos[1]
 
-    def render(self, grid):
-        length = self.ship_length[self.name]
-        for i in range(length):
-            if self.direction == 'accross':
-                grid.grid[self.x][chr(ord(self.y) + i)] = SHIP_MARKER
-            elif self.direction == 'down':
-                grid.grid[self.x + i][self.y] = SHIP_MARKER
 
+battlefield = Battlefield()
 
-grid = Battlefield()
+battlefield.render_grid()
 
-sub1 = Ship('submarine', [8, 'E'], 'accross')
-carrier = Ship('carrier', [3, 'B'], 'down')
-cruiser = Ship('cruiser', [6, 'G'], 'accross')
-destroyer1 = Ship('destroyer', [2, 'J'], 'down')
-battleship = Ship('battleship', [1, 'E'], 'down')
-sub2 = Ship('submarine', [10, 'J'], 'down')
-destroyer2 = Ship('destroyer', [1, 'G'], 'accross')
+sub1 = Ship('submarine', (8, 'E'), 'accross')
+carrier = Ship('carrier', (3, 'B'), 'down')
+cruiser = Ship('cruiser', (6, 'G'), 'accross')
+destroyer1 = Ship('destroyer', (2, 'J'), 'down')
+battleship = Ship('battleship', (1, 'E'), 'down')
+sub2 = Ship('submarine', (10, 'J'), 'down')
+destroyer2 = Ship('destroyer', (1, 'G'), 'accross')
 
-sub1.render(grid)
-carrier.render(grid)
-cruiser.render(grid)
-destroyer1.render(grid)
-battleship.render(grid)
-sub2.render(grid)
-destroyer2.render(grid)
+fleet = [sub1, carrier, cruiser, destroyer1,
+         battleship, sub2, destroyer2]
 
-grid.display_grid()
+for ship in fleet:
+    battlefield.map_ship(ship)
+
+battlefield.render_grid()
+
+print(battlefield.grid)
