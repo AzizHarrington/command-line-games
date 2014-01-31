@@ -31,11 +31,11 @@ class Battlefield(object):
             print(line)
 
     def map_ship(self, ship):
-        for i in range(ship.length):
-            if ship.direction == 'accross':
-                self.grid[ship.x][chr(ord(ship.y) + i)] = SHIP_MARKER
-            elif ship.direction == 'down':
-                self.grid[ship.x + i][ship.y] = SHIP_MARKER
+        if ship.coordinates:
+            for coordinate in ship.coordinates:
+                x = coordinate[0] # ie 'J'
+                y = coordinate[1] # ie 5
+                self.grid[y][x] = SHIP_MARKER
 
 
 class Ship(object):
@@ -47,30 +47,45 @@ class Ship(object):
 
     def __init__(self, name, pos, direction):
         self.name = name
-        self.length = self.ship_length[name]
+        self.pos = pos
         self.direction = direction
-        self.x = pos[0]
-        self.y = pos[1]
+        self.length = self.ship_length[name]
+        self.coordinates = None
+
+    def set_coordinates(self):
+        coordinates = []
+        x = self.pos[0] # ie 'J'
+        y = self.pos[1] # ie 5
+        for i in range(self.length):
+            if self.direction == 'accross':
+                coordinate = (chr(ord(x) + i), y)
+            elif self.direction == 'down':
+                coordinate = (x, y + i)
+            coordinates += [coordinate]
+        self.coordinates = coordinates
+
+
 
 
 battlefield = Battlefield()
 
-battlefield.render_grid()
+# battlefield.render_grid()
 
-sub1 = Ship('submarine', (8, 'E'), 'accross')
-carrier = Ship('carrier', (3, 'B'), 'down')
-cruiser = Ship('cruiser', (6, 'G'), 'accross')
-destroyer1 = Ship('destroyer', (2, 'J'), 'down')
-battleship = Ship('battleship', (1, 'E'), 'down')
-sub2 = Ship('submarine', (10, 'J'), 'down')
-destroyer2 = Ship('destroyer', (1, 'G'), 'accross')
+sub1 = Ship('submarine', ('E', 8), 'accross')
+carrier = Ship('carrier', ('B', 3), 'down')
+cruiser = Ship('cruiser', ('G', 6), 'accross')
+destroyer1 = Ship('destroyer', ('J', 2), 'down')
+battleship = Ship('battleship', ('E', 1), 'down')
+sub2 = Ship('submarine', ('J', 10), 'down')
+destroyer2 = Ship('destroyer', ('G', 1), 'accross')
 
 fleet = [sub1, carrier, cruiser, destroyer1,
          battleship, sub2, destroyer2]
 
 for ship in fleet:
+    ship.set_coordinates()
     battlefield.map_ship(ship)
 
 battlefield.render_grid()
 
-print(battlefield.grid)
+# print(battlefield.grid)
