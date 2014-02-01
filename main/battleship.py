@@ -3,7 +3,7 @@
 SHIP_MARKER = '▣'
 HIT = '▢'
 ENEMY_HIT = 'X'
-ENEMY_MISS = 'O'
+ENEMY_MISS = '⚐'
 EMPTY = '◠'
 ABC = 'ABCDEFGHIJ'
 LIMIT = len(ABC)
@@ -37,6 +37,19 @@ class Battlefield(object):
                 y = coordinate[1] # ie 5
                 self.grid[y][x] = SHIP_MARKER
 
+    def fire(self, coordinate, fleet):
+        hit = False
+        for ship in fleet.ships:
+            if coordinate in ship.coordinates:
+                fleet.health -= 1
+                hit = True
+        x = coordinate[0]
+        y = coordinate[1]
+        if hit:
+            self.grid[y][x] = ENEMY_HIT
+        else:
+            self.grid[y][x] = ENEMY_MISS
+
 
 class Ship(object):
     ship_length = {'carrier': 5,
@@ -65,11 +78,17 @@ class Ship(object):
         self.coordinates = coordinates
 
 
+class Fleet(object):
+    def __init__(self, ships):
+        self.ships = ships
+        self.health = None
+
+    def set_fleet_health(self):
+        self.health = sum([ship.length for ship in self.ships])
 
 
 battlefield = Battlefield()
 
-# battlefield.render_grid()
 
 sub1 = Ship('submarine', ('E', 8), 'accross')
 carrier = Ship('carrier', ('B', 3), 'down')
@@ -79,13 +98,23 @@ battleship = Ship('battleship', ('E', 1), 'down')
 sub2 = Ship('submarine', ('J', 10), 'down')
 destroyer2 = Ship('destroyer', ('G', 1), 'accross')
 
-fleet = [sub1, carrier, cruiser, destroyer1,
-         battleship, sub2, destroyer2]
+fleet = Fleet([sub1, carrier, cruiser, destroyer1, battleship, sub2, destroyer2])
 
-for ship in fleet:
+print(fleet.ships)
+fleet.set_fleet_health()
+print(fleet.health)
+
+for ship in fleet.ships:
     ship.set_coordinates()
-    battlefield.map_ship(ship)
+    print(ship.coordinates)
+    # battlefield.map_ship(ship)
 
 battlefield.render_grid()
 
-# print(battlefield.grid)
+battlefield.fire(('B', 4), fleet)
+battlefield.fire(('G', 2), fleet)
+
+print(fleet.health)
+battlefield.render_grid()
+
+
