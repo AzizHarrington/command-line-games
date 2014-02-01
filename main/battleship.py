@@ -3,7 +3,7 @@
 SHIP_MARKER = '▣'
 HIT = '▢'
 ENEMY_HIT = 'X'
-ENEMY_MISS = '⚐'
+ENEMY_MISS = '⚑'
 EMPTY = '◠'
 ABC = 'ABCDEFGHIJ'
 LIMIT = len(ABC)
@@ -47,8 +47,10 @@ class Battlefield(object):
         y = coordinate[1]
         if hit:
             self.grid[y][x] = ENEMY_HIT
+            return True
         else:
             self.grid[y][x] = ENEMY_MISS
+            return False
 
 
 class Ship(object):
@@ -100,21 +102,25 @@ destroyer2 = Ship('destroyer', ('G', 1), 'accross')
 
 fleet = Fleet([sub1, carrier, cruiser, destroyer1, battleship, sub2, destroyer2])
 
-print(fleet.ships)
+# print(fleet.ships)
 fleet.set_fleet_health()
-print(fleet.health)
+# print(fleet.health)
 
 for ship in fleet.ships:
     ship.set_coordinates()
-    print(ship.coordinates)
+    # print(ship.coordinates)
     # battlefield.map_ship(ship)
 
-battlefield.render_grid()
 
-battlefield.fire(('B', 4), fleet)
-battlefield.fire(('G', 2), fleet)
 
-print(fleet.health)
-battlefield.render_grid()
+while True:
+    battlefield.render_grid()
+    coords = input('Enter coords > ')
+    if coords == "n":
+        break
+    x, y = coords[0], int(coords[1])
+    battlefield.fire((x, y), fleet)
+
+
 
 
