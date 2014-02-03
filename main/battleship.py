@@ -10,38 +10,69 @@ LIMIT = len(ABC)
 
 
 class Battlefield(object):
+    """
+    Object to represent battlefield grid and
+    associated methods.
+    """
     def __init__(self):
+        """
+        Initialize dictionary to represent battlefield grid.
+        """
         self.grid = {num: {alpha: EMPTY
                         for alpha in ABC}
                         for num in range(1, LIMIT + 1)}
 
     def render_grid(self):
+        """
+        Draw self on command line terminal.
+        """
+        #make column headers = abc's
         line = '   '
         for a in ABC:
             line += a
             line += ' '
         print(line)
+        # add row header and row
         for i in range(1, LIMIT + 1):
+            # if row header # is one digit
+            # add a space before printing to align with
+            # two digit header
             line = ' ' if len(str(i)) == 1 else ''
+            # add header (ie '5')
             line += str(i)
             line += ' '
+            # add row cells
             for a in ABC:
                 line += self.grid[i][a]
                 line += ' '
+            #print row and cell
             print(line)
 
     def map_ship(self, ship):
+        """
+        Takes a ship and loops through its coords
+        to add it onto the grid.
+        """
         if ship.coordinates:
             for coordinate in ship.coordinates:
+                #split up coords into x & y
                 x = coordinate[0] # ie 'J'
                 y = coordinate[1] # ie 5
                 self.grid[y][x] = SHIP_MARKER
 
     def fire(self, coordinate, fleet):
+        """
+        Takes coordinate and looks to for 
+        a ship at matching poin on grid.
+        If there is a ship, register a hit.
+        otherwise, miss.
+        """
         hit = False
         for ship in fleet.ships:
             if coordinate in ship.coordinates:
-                fleet.health -= 1
+                # if ship is at coordinates, decrement 
+                # ship health by 1
+                ship.health -= 1
                 hit = True
         x = coordinate[0]
         y = coordinate[1]
@@ -83,9 +114,6 @@ class Ship(object):
 class Fleet(object):
     def __init__(self, ships):
         self.ships = ships
-        self.health = None
-
-    def set_fleet_health(self):
         self.health = sum([ship.length for ship in self.ships])
 
 
@@ -102,24 +130,23 @@ destroyer2 = Ship('destroyer', ('G', 1), 'accross')
 
 fleet = Fleet([sub1, carrier, cruiser, destroyer1, battleship, sub2, destroyer2])
 
-# print(fleet.ships)
-fleet.set_fleet_health()
-# print(fleet.health)
 
 for ship in fleet.ships:
     ship.set_coordinates()
     # print(ship.coordinates)
-    # battlefield.map_ship(ship)
+    battlefield.map_ship(ship)
+
+battlefield.render_grid()
 
 
 
-while True:
-    battlefield.render_grid()
-    coords = input('Enter coords > ')
-    if coords == "n":
-        break
-    x, y = coords[0], int(coords[1])
-    battlefield.fire((x, y), fleet)
+# while True:
+#     battlefield.render_grid()
+#     coords = input('Enter coords > ')
+#     if coords == "n":
+#         break
+#     x, y = coords[0], int(coords[1])
+#     battlefield.fire((x, y), fleet)
 
 
 
