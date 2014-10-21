@@ -1,7 +1,7 @@
 from mock import patch, Mock
 from nose.tools import *
 
-from main.blackjack import Deck, Player, Dealer, Game
+from main.blackjack import Deck, Player, Dealer
 
 
 def test_deck():
@@ -15,7 +15,6 @@ def test_deck():
     for i in range(53):
         deck.drawone()
     assert_equal(True, (len(deck.cards) != 0))
-
 
 # suites: ♠♥♦♣
 def test_player():

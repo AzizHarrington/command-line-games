@@ -1,8 +1,7 @@
 from mock import patch, Mock
 from nose.tools import *
 
-from main.battleship import Battlefield, Ship, Fleet
-from main.battleship import SHIP_MARKER
+from main.old_battleship import Battlefield, Ship, Fleet, SHIP_MARKER
 
 
 def test_battlefield():
@@ -17,8 +16,6 @@ def test_battlefield():
                            ('B', 7)]
     battlefield.map_ship(carrier)
     assert_equal(SHIP_MARKER, battlefield.grid[3]['B'])
-
-
 
 def test_ship():
     destroyer = Ship('destroyer', ('J', 2), 'down')
