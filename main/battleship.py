@@ -1,5 +1,10 @@
 import random
 
+SHIP_MARKER = '▣'
+HIT = '▢'
+ENEMY_HIT = 'X'
+ENEMY_MISS = '⚑'
+EMPTY = '◠'
 ABC = 'ABCDEFGHIJ'
 LIMIT = len(ABC)
 
@@ -66,8 +71,40 @@ class GameGrid(object):
         print("%s placed successfully!" % ship.name)
         return True
 
+    def render_grid(self):
+        """
+        Draw self on command line terminal.
+        """
+        #make column headers = abc's
+        line = '   '
+        for a in ABC:
+            line += a
+            line += ' '
+        print(line)
+        # add row header and row
+        for i in range(1, LIMIT + 1):
+            # if row header # is one digit
+            # add a space before printing to align with
+            # two digit header
+            line = ' ' if len(str(i)) == 1 else ''
+            # add header (ie '5')
+            line += str(i)
+            line += ' '
+            # add row cells
+            for a in ABC:
+                node = self.grid[a][i]
+                if node.ship:
+                    line += SHIP_MARKER
+                else:
+                    line += EMPTY
+                line += ' '
+            #print row and cell
+            print(line)
+
 
 g = GameGrid()
+
+mega_warship = Ship("mega war ship", 6)
 
 super_battleship = Ship("super battleship", 5)
 
@@ -77,9 +114,15 @@ battleship = Ship("battleship", 3)
 
 battleship2 = Ship("battleship 2", 3)
 
+battleship3 = Ship("battleship 3", 3)
+
 destroyer = Ship("destroyer", 2)
 
 destroyer2 = Ship("destroyer 2", 2)
+
+destroyer3 = Ship("destroyer 3", 2)
+
+destroyer4 = Ship("destroyer 4", 2)
 
 sub = Ship("submarine", 1)
 
@@ -90,17 +133,18 @@ carrier = Ship("carrier", 4)
 carrier2 = Ship("carrier 2", 4)
 
 fleet = [
-    super_battleship,
-    super_battleship2,
+    mega_warship,
+    carrier,
+    carrier2,
     battleship,
     battleship2,
+    battleship3,
     destroyer,
     destroyer2,
-    sub,
-    sub2,
-    carrier,
-    carrier2
+    destroyer3,
+    destroyer4
 ]
 
 g.place_fleet(fleet)
+g.render_grid()
 
