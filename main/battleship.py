@@ -1,4 +1,8 @@
 import random
+import sys
+import itertools
+
+sys.setrecursionlimit(100000)
 
 SHIP_MARKER = '▣'
 HIT = '▢'
@@ -7,6 +11,8 @@ ENEMY_MISS = '⚑'
 EMPTY = '◠'
 ABC = 'ABCDEFGHIJ'
 LIMIT = len(ABC)
+
+PLACEFLEET_RECURSE_COUNT = 0
 
 class Ship(object):
     def __init__(self, name, length):
@@ -23,37 +29,72 @@ class Node(object):
 
 class GameGrid(object):
     def __init__(self):
+        self.points = list(itertools.product(ABC, range(LIMIT)))
         self.grid = {alpha: {num: Node() 
                     for num in range(1, LIMIT + 1)}
                     for alpha in ABC}
 
     def place_fleet(self, fleet):
+        global PLACEFLEET_RECURSE_COUNT
+        PLACEFLEET_RECURSE_COUNT += 1
         if len(fleet) == 0:
             print("reached base")
             return True
         else:
-            x = random.sample(ABC, 1)[0]
-            y = random.randrange(1, LIMIT+1)
+            num_points = len(self.points)
+            point = None
+            if num_points > 0:
+                point = self.points.pop(random.randrange(len(self.points)))
+            else:
+                print("ran out of points to check")
+                return True
             ship = fleet[0]
             across = random.randrange(2)
-            success = self._place_ship(ship, (x, y), across)
+            success = self._place_ship(ship, point, across)
             if success:
                 print("recurse")
                 return self.place_fleet(fleet[1:])
             else:
+                self.points.append(point)
                 print("recurse")
                 return self.place_fleet(fleet)
 
     def _place_ship(self, ship, coords, across=1):
+        """
+        Places a ship within the confines of the grid.
+        Also ensures no overlapping or adjacent ships
+        """
         x, y = coords
         nodes = []
         for i in range(ship.length):
+            # check coords
             try:
-                node = self.grid[x][y]
+                # check surrounding coords
+                perimeter = [
+                    (chr(ord(x)+1), y),
+                    (chr(ord(x)-1), y),
+                    (x, y+1),
+                    (x, y-1)
+                ]
+                for c in perimeter:
+                    perimeter_node = self.grid[c[0]][c[1]]
+                    # check that adjacent perimeter_node
+                    # does not contain reference to another ship
+                    if perimeter_node.ship and perimeter_node.ship != ship:
+                        print("%s placement failed: Adjacent ship" % ship.name)
+                        return False
             except KeyError:
+                pass
+            try:
+                # we've made it through the perimeter check,
+                # keep track of current node
+                node = self.grid[x][y]
+            except:
+                # key error
                 print("%s placement failed: KeyError" % ship.name)
                 return False
             if node.ship:
+                # node occupied by another ship
                 print("%s placement failed: node already contained ship" % ship.name)
                 return False
             else:
@@ -133,7 +174,7 @@ carrier = Ship("carrier", 4)
 carrier2 = Ship("carrier 2", 4)
 
 fleet = [
-    mega_warship,
+    super_battleship,
     carrier,
     carrier2,
     battleship,
@@ -146,5 +187,6 @@ fleet = [
 ]
 
 g.place_fleet(fleet)
+print("Total recurssive calls to place_fleet: %s" % PLACEFLEET_RECURSE_COUNT)
 g.render_grid()
 
