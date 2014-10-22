@@ -9,7 +9,7 @@ HIT = '▢'
 ENEMY_HIT = 'X'
 ENEMY_MISS = '⚑'
 EMPTY = '◠'
-ABC = 'ABCDEFGHIJ'
+ABC = 'ABCDEFGHIJKLMN'
 LIMIT = len(ABC)
 
 PLACEFLEET_RECURSE_COUNT = 0
@@ -33,6 +33,21 @@ class GameGrid(object):
         self.grid = {alpha: {num: Node() 
                     for num in range(1, LIMIT + 1)}
                     for alpha in ABC}
+
+    def fire(self, x, y):
+        node = self.grid[x][y]
+        if not node.hit:
+            node.hit = True
+            if node.ship:
+                node.ship.health -= 1
+                print("Hit on enemy %s" % node.ship.name)
+                if node.ship.health == 0:
+                    print("You sunk the enemy %s!" % node.ship.name)
+            else:
+                print("Miss!")
+        else:
+            print("You've already fired at those coordinates!")
+        self.render_grid()
 
     def place_fleet(self, fleet):
         global PLACEFLEET_RECURSE_COUNT
@@ -68,28 +83,28 @@ class GameGrid(object):
         nodes = []
         for i in range(ship.length):
             # check coords
-            try:
-                # check surrounding coords
-                perimeter = [
-                    (chr(ord(x)+1), y),
-                    (chr(ord(x)-1), y),
-                    (x, y+1),
-                    (x, y-1)
-                ]
-                for c in perimeter:
+            # check surrounding coords
+            perimeter = [
+                (chr(ord(x)+1), y),
+                (chr(ord(x)-1), y),
+                (x, y+1),
+                (x, y-1)
+            ]
+            for c in perimeter:
+                try:
                     perimeter_node = self.grid[c[0]][c[1]]
                     # check that adjacent perimeter_node
                     # does not contain reference to another ship
                     if perimeter_node.ship and perimeter_node.ship != ship:
                         print("%s placement failed: Adjacent ship" % ship.name)
                         return False
-            except KeyError:
-                pass
+                except KeyError:
+                    pass
             try:
                 # we've made it through the perimeter check,
                 # keep track of current node
                 node = self.grid[x][y]
-            except:
+            except KeyError:
                 # key error
                 print("%s placement failed: KeyError" % ship.name)
                 return False
@@ -135,9 +150,15 @@ class GameGrid(object):
             for a in ABC:
                 node = self.grid[a][i]
                 if node.ship:
-                    line += SHIP_MARKER
+                    if node.hit:
+                        line += HIT
+                    else:
+                        line += SHIP_MARKER
                 else:
-                    line += EMPTY
+                    if node.hit:
+                        line += ENEMY_MISS
+                    else:
+                        line += EMPTY
                 line += ' '
             #print row and cell
             print(line)
