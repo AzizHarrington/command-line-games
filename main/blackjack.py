@@ -1,4 +1,5 @@
 import random
+import os
 
 
 class Deck(object):
@@ -109,74 +110,81 @@ class Game(object):
         self.dealer = Dealer()
         self.player = Player()
 
+    def print_hand(self, hand):
+        result = ""
+        for c in hand:
+            result += (c + " ")
+        print(result)
+
     def play(self):
+        os.system('clear')
         print("------------------------------------------------")
         print("Welcome to Command Line Blackjack!")
         print("------------------------------------------------")
         print("Press enter to start the game!")
-        input()
+        input(">")
         print("The dealer begins to shuffle the cards...")
         self.dealer.deal()
         self.player.deal()
         print("...and deals the hands.")
-        input()
+        input(">")
         print("------------------------------------------------")
         print("Dealer:")
-        print(self.dealer.hand)
+        self.print_hand(self.dealer.hand)
         self.dealer.get_current_score()
         print("------------------------------------------------")
-        input()
+        input(">")
         print("------------------------------------------------")
         print("Your hand:")
-        print(self.player.hand)
+        self.print_hand(self.player.hand)
         self.player.get_current_score()
         print("------------------------------------------------")
-        input()
+        input(">")
 
         while not (self.dealer.stay and self.player.stay):
             print("The dealer is thinking.")
-            input()
+            input(">")
             self.dealer.next_move()
-            input()
+            input(">")
             self.dealer.get_current_score()
             if self.dealer.score == 0:
                 print("The dealer busted!")
-                print(self.dealer.hand)
+                self.print_hand(self.dealer.hand)
                 break
             elif self.dealer.score == 22:
                 print("The dealer got blackjack!")
-                print(self.dealer.hand)
+                self.print_hand(self.dealer.hand)
                 break
             if not self.dealer.stay:
                 print("Dealer:")
-                print(self.dealer.hand)
+                self.print_hand(self.dealer.hand)
                 print("------------------------------------------------")
-                input()
+                input(">")
 
             self.player.next_move()
             print('')
-            print(self.player.hand)
-            input()
+            self.print_hand(self.player.hand)
+            input(">")
             self.player.get_current_score()
             if self.player.score == 0:
                 print("You busted!!")
-                print(self.player.hand)
+                self.print_hand(self.player.hand)
                 break
             elif self.player.score == 22:
                 print("You got blackjack!")
-                print(self.player.hand)
+                self.print_hand(self.player.hand)
                 break
             if not self.player.stay:
                 print("Your hand:")
-                print(self.player.hand)
+                self.print_hand(self.player.hand)
                 print("------------------------------------------------")
-                input()
+                input(">")
 
         if self.dealer.score >= self.player.score:
             print("The house wins. Better luck next time!")
         else:
             print("You win!")
-        input()
+        input(">")
 
 
 if __name__ == "__main__":
@@ -191,4 +199,4 @@ if __name__ == "__main__":
         print("Play again? (yes/no)")
         again = input(">")
     print("Come back soon!")
-    input()
+    input(">")

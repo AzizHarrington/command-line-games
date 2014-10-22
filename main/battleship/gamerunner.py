@@ -1,7 +1,6 @@
-from gamegrid import Ship, Node, GameGrid
+import os
 
-player1 = GameGrid()
-player2 = GameGrid()
+from gamegrid import Ship, Node, GameGrid
 
 fleet = [
     Ship("Aircraft Carrier", 5),
@@ -13,7 +12,16 @@ fleet = [
     Ship("Submarine", 1)
 ]
 
-player1.place_fleet(fleet)
-player2.place_fleet(fleet)
-player2.render_grid()
-player1.render_grid()
+clear = lambda: os.system('clear')
+
+def main():
+    clear()
+    player1 = GameGrid()
+    player2 = GameGrid()
+    player1.place_fleet(fleet)
+    player2.place_fleet(fleet)
+    player2.render_grid()
+    player1.render_grid()
+
+
+main()
