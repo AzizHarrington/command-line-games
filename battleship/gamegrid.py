@@ -1,13 +1,6 @@
 import random
 import itertools
-
-SHIP_MARKER = '▣'
-HIT = '▢'
-ENEMY_HIT = 'X'
-ENEMY_MISS = '⚑'
-EMPTY = '◠'
-ABC = 'ABCDEFGHIJ'
-LIMIT = len(ABC)
+import copy
 
 class Ship(object):
     """
@@ -41,17 +34,26 @@ class GameGrid(object):
     Methods for ship placement, rendering, and 
     firing.
     """
-    def __init__(self):
-        self.points = list(itertools.product(ABC, range(LIMIT)))
+    def __init__(self, fleet):
+        self.fleet = fleet
+        self.fleet_health = sum([s.health for s in self.fleet])
+        self.ABC = 'ABCDEFGHIJ'
+        self.LIMIT = len(self.ABC)
+        self.points = list(itertools.product(self.ABC, range(self.LIMIT)))
         self.grid = {alpha: {num: Node() 
-                    for num in range(1, LIMIT + 1)}
-                    for alpha in ABC}
+                    for num in range(1, self.LIMIT + 1)}
+                    for alpha in self.ABC}
 
     def fire(self, x, y):
         """
         Method for firing upon grid.
         Takes x (char) and y (int)
         and checks node at (x,y) coordinates
+
+        Returns:
+        2 = hit ship
+        1 = miss
+        0 = node already fired upon
         """
         node = self.grid[x][y]
         # check that node has not yet
@@ -60,46 +62,47 @@ class GameGrid(object):
             node.hit = True
             if node.ship:
                 node.ship.health -= 1
-                print("Hit on enemy %s" % node.ship.name)
-                if node.ship.health == 0:
-                    print("You sunk the enemy %s!" % node.ship.name)
-            else:
-                print("Miss!")
-        else:
-            print("You've already fired at those coordinates!")
+                self.fleet_health -= 1
+                return 2
+            return 1
+        return 0
 
-    def place_fleet(self, fleet):
+    def place_fleet(self):
         """
         Recursive function that takes list of 
         ship objects (fleet) and places them 
         randomly into game grid nodes.
         """
-        if len(fleet) == 0:
-            # simple base case that
-            # no ships remain to be placed
-            return True
-        else:
-            num_points = len(self.points)
-            point = None
-            if num_points > 0:
-                point = self.points.pop(random.randrange(len(self.points)))
-            else:
-                # we've run out of points to check
-                # exit recursive loop with return True
+        def find_placements(fleet):
+            if len(fleet) == 0:
+                # simple base case that
+                # no ships remain to be placed
                 return True
-            ship = fleet[0]
-            across = random.randrange(2)
-            success = self._place_ship(ship, point, across)
-            if success:
-                # recurse with one less ship
-                return self.place_fleet(fleet[1:])
             else:
-                # put the point back;
-                # it may work for placement of
-                # of smaller ship
-                self.points.append(point)
-                # recurse with unchanged fleet
-                return self.place_fleet(fleet)
+                num_points = len(self.points)
+                point = None
+                if num_points > 0:
+                    point = self.points.pop(random.randrange(len(self.points)))
+                else:
+                    # we've run out of points to check
+                    # exit recursive loop with return True
+                    return True
+                ship = fleet[0]
+                across = random.randrange(2)
+                success = self._place_ship(ship, point, across)
+                if success:
+                    # recurse with one less ship
+                    return find_placements(fleet[1:])
+                else:
+                    # put the point back;
+                    # it may work for placement of
+                    # of smaller ship
+                    self.points.append(point)
+                    # recurse with unchanged fleet
+                    return find_placements(fleet)
+
+        fleet = copy.copy(self.fleet)
+        find_placements(fleet)
 
     def _place_ship(self, ship, coords, across=1):
         """
@@ -152,39 +155,3 @@ class GameGrid(object):
             node.ship = ship
         # ship placement success!
         return True
-
-    def render_grid(self):
-        """
-        Draw self on command line terminal.
-        """
-        #make column headers = abc's
-        line = '   '
-        for a in ABC:
-            line += a
-            line += ' '
-        print(line)
-        # add row header and row
-        for i in range(1, LIMIT + 1):
-            # if row header # is one digit
-            # add a space before printing to align with
-            # two digit header
-            line = ' ' if len(str(i)) == 1 else ''
-            # add header (ie '5')
-            line += str(i)
-            line += ' '
-            # add row cells
-            for a in ABC:
-                node = self.grid[a][i]
-                if node.ship:
-                    if node.hit:
-                        line += HIT
-                    else:
-                        line += SHIP_MARKER
-                else:
-                    if node.hit:
-                        line += ENEMY_MISS
-                    else:
-                        line += EMPTY
-                line += ' '
-            #print row and cell
-            print(line)
