@@ -1,6 +1,12 @@
 import os
 
-from gamegrid import Ship, Node, GameGrid
+from gamegrid import Ship, GameGrid
+
+SHIP_MARKER = '▣'
+HIT = '▢'
+ENEMY_HIT = 'X'
+ENEMY_MISS = '⚑'
+EMPTY = '◠'
 
 fleet = [
     Ship("Aircraft Carrier", 5),
