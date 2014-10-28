@@ -9,7 +9,7 @@ ENEMY_MISS = '⚑'
 EMPTY = '◠'
 
 
-def render_grid(grid):
+def render_grid(grid, enemy=False):
     """
     Draw grid on command line terminal.
     """
@@ -34,7 +34,7 @@ def render_grid(grid):
             if node.ship:
                 if node.hit:
                     line += HIT
-                else:
+                elif not enemy:
                     line += SHIP_MARKER
             else:
                 if node.hit:
@@ -116,7 +116,7 @@ def main():
         print("Times through loop: %s" % times_through_loop)
         times_through_loop += 1
         print("Oppenent's board:")
-        render_grid(opponent)
+        render_grid(opponent, enemy=True)
         print()
         print("Your board:")
         render_grid(defending_player)
