@@ -1,6 +1,6 @@
 import random
 import itertools
-import copy
+
 
 class Ship(object):
     """
@@ -101,8 +101,7 @@ class GameGrid(object):
                     # recurse with unchanged fleet
                     return find_placements(fleet)
 
-        fleet = copy.copy(self.fleet)
-        find_placements(fleet)
+        find_placements(self.fleet)
 
     def _place_ship(self, ship, coords, across=1):
         """
