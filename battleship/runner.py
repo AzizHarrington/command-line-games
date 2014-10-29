@@ -1,11 +1,12 @@
 import os
+import time
 
 from gamegrid import Ship, GameGrid
+from ai import OpponentAi
 
 SHIP_MARKER = '▣'
-HIT = '▢'
-ENEMY_HIT = 'X'
-ENEMY_MISS = '⚑'
+HIT = 'X'
+MISS = '⚑'
 EMPTY = '◠'
 
 
@@ -36,13 +37,15 @@ def render_grid(grid, enemy=False):
                     line += HIT
                 elif not enemy:
                     line += SHIP_MARKER
+                else:
+                    line += EMPTY
             else:
                 if node.hit:
-                    line += ENEMY_MISS
+                    line += MISS
                 else:
                     line += EMPTY
             line += ' '
-        #print row and cell
+        # print row and cell
         print(line)
 
 
@@ -54,12 +57,13 @@ def fire_shot(coords, board):
     """
     try:
         # unpack coord string
-        x, y = coords
+        x, y = coords[0], coords[1:]
         x = x.upper()
         y = int(y)
 
-    except ValueError:
+    except:
         print("Invalid coordinates. Please type letter first, then number.")
+        print("(ex: 'b4')")
         return False
 
     if x not in board.ABC or y > board.LIMIT:
@@ -73,7 +77,7 @@ def fire_shot(coords, board):
         print("Hit on opponent's %s" % ship.name)
         if ship.health == 0:
             print("You've sunk the enemy %s!" % ship.name)
-        return True
+        return False
 
     elif result == 1:
         print("Miss!")
@@ -97,10 +101,12 @@ fleet = [
 clear = lambda: os.system('clear')
 
 def main():
-    opponent = GameGrid(fleet)
-    defending_player = GameGrid(fleet)
-    opponent.place_fleet()
-    defending_player.place_fleet()
+    player_board = GameGrid(fleet)
+    opponent_board = GameGrid(fleet)
+    player_board.place_fleet()
+    opponent_board.place_fleet()
+
+    opponent_ai = OpponentAi()
 
     clear()
     print("Welcome to Battleship: command line edition!")
@@ -116,29 +122,45 @@ def main():
         print("Times through loop: %s" % times_through_loop)
         times_through_loop += 1
         print("Oppenent's board:")
-        render_grid(opponent, enemy=True)
+        render_grid(opponent_board, enemy=True)
         print()
         print("Your board:")
-        render_grid(defending_player)
+        render_grid(player_board)
         print()
 
         if player_turn:
+            print("Your turn:")
             print("Enter coordinates to launch attack on opponent!")
-            print("(ex: 'b4')")
+            
             hit = False
-
             while not hit:
                 coords = input()
-                hit = fire_shot(coords, opponent)
+                hit = fire_shot(coords, opponent_board)
 
-        print("Opponent fleet health: %s" % opponent.fleet_health)
+            print("Opponent fleet health: %s" % opponent_board.fleet_health)
 
-        if opponent.fleet_health == 0:
-            print("Congratulations, you've destroyed the enemy fleet!")
-            print("You win!")
-            break
+            if opponent_board.fleet_health == 0:
+                print("Congratulations, you've destroyed the enemy fleet!")
+                print("You win!")
+                break
 
-        input("continue.. >")
+            player_turn = False
+
+        else:
+            print("Opponent's turn.")
+            time.sleep(5)
+
+            hit = False
+            while not hit:
+                coords = opponent_ai.choose_coords(player_board)
+                hit = fire_shot(coords, player_board)
+
+            if player_board.fleet_health == 0:
+                print("You lose, better luck next time!")
+
+            player_turn = True
+
+        input()
 
 
 main()
